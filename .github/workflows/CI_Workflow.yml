@@ -22,15 +22,15 @@ jobs:
     - name: Test Customer Service
       working-directory: ./customer
       run: |
-        npm i
+        npm ci
         npm test
     - name: Test Products Service
       working-directory: ./products
       run: |
-        npm i
+        npm ci
         npm test
     - name: Test Shopping Service
       working-directory: ./shopping
       run: |
-        npm i
+        npm ci
         npm test
