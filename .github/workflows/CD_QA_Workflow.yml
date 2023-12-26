@@ -23,7 +23,7 @@ jobs:
         echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
         echo EXCHANGE_NAME=ONLISE_STORE
         echo PORT=8001 >> .env
-        cat.env
+        cat .env
 
     - name: Create products Env file
       working-directory: ./products
@@ -34,7 +34,7 @@ jobs:
         echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
         echo EXCHANGE_NAME=ONLISE_STORE
         echo PORT=8002 >> .env
-        cat.env
+        cat .env
 
     - name: Create shopping Env file
       working-directory: ./shopping
@@ -45,7 +45,7 @@ jobs:
         echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
         echo EXCHANGE_NAME=ONLISE_STORE
         echo PORT=8003 >> .env
-        cat.env
+        cat .env
 
     - name: Generate deployment package
       run: |
