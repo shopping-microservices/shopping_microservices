@@ -18,7 +18,7 @@ jobs:
       working-directory: ./customer
       run: |
         touch .env
-        echo APP_SECRET =shopping_microservices >> .env
+        echo APP_SECRET=shopping_microservices >> .env
         echo MONGODB_URI=mongodb://nosql-db/shopping_ms_customer >> .env
         echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
         echo EXCHANGE_NAME=ONLISE_STORE
