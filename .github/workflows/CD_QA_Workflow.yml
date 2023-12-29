@@ -60,3 +60,5 @@ jobs:
         environment_name: Test-env
         version_label: "ver-${{ github.sha }}"
         region: eu-central-1
+        deployment_package: deploy.zip
+        
