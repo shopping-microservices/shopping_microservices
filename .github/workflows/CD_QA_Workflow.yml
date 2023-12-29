@@ -58,7 +58,6 @@ jobs:
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCES_KEY }}
         application_name: test-qa
         environment_name: Test-qa-env
-        use_existing_version_if_available: true
         version_label: "ver-${{ github.sha }}"
         region: eu-central-1
         deployment_package: deploy-v2.zip
