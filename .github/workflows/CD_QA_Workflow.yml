@@ -61,4 +61,4 @@ jobs:
         use_existing_version_if_available: true
         version_label: "ver-${{ github.sha }}"
         region: eu-central-1
-        deployment_package: deploy.zip
+        deployment_package: deploy-v2.zip
