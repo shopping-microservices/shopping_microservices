@@ -1,18 +1,22 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// const axios = require("axios");
+const axios = require("axios");
 const amqplib = require("amqplib");
 
-const { APP_SECRET, MESSAGE_BROKER_URL, EXCHANGE_NAME } = require("../config");
+const {
+  APP_SECRET,
+  BASE_URL,
+  EXCHANGE_NAME,
+  MSG_QUEUE_URL,
+} = require("../config");
 
 //Utility functions
-module.exports.GenerateSalt = async () => {
+(module.exports.GenerateSalt = async () => {
   return await bcrypt.genSalt();
-};
-
-module.exports.GeneratePassword = async (password, salt) => {
-  return await bcrypt.hash(password, salt);
-};
+}),
+  (module.exports.GeneratePassword = async (password, salt) => {
+    return await bcrypt.hash(password, salt);
+  });
 
 module.exports.ValidatePassword = async (
   enteredPassword,
@@ -22,27 +26,20 @@ module.exports.ValidatePassword = async (
   return (await this.GeneratePassword(enteredPassword, salt)) === savedPassword;
 };
 
-module.exports.GenerateSignature = async (payload) => {
-  try {
-    return await jwt.sign(payload, APP_SECRET, { expiresIn: "30d" });
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
-module.exports.ValidateSignature = async (req) => {
-  try {
+(module.exports.GenerateSignature = async (payload) => {
+  return await jwt.sign(payload, APP_SECRET, { expiresIn: "1d" });
+}),
+  (module.exports.ValidateSignature = async (req) => {
     const signature = req.get("Authorization");
-    console.log(signature);
-    const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
-    req.user = payload;
-    return true;
-  } catch (error) {
-    console.log(error);
+
+    if (signature) {
+      const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
+      req.user = payload;
+      return true;
+    }
+
     return false;
-  }
-};
+  });
 
 module.exports.FormateData = (data) => {
   if (data) {
@@ -52,43 +49,41 @@ module.exports.FormateData = (data) => {
   }
 };
 
-/* // message broker */
+//Raise Events
+module.exports.PublishCustomerEvent = async (payload) => {
+  axios.post("http://customer:8001/app-events/", {
+    payload,
+  });
 
-// create a channel
-module.exports.CreateChannel = async() => {
-  try{
-    const connection = await amqplib.connect(MESSAGE_BROKER_URL)
-    const channel = await connection.createChannel()
-    await channel.assertExchange(EXCHANGE_NAME, 'direct', false);
-    return channel;
-  }catch(err){
-    throw err
-  }
+  //     axios.post(`${BASE_URL}/customer/app-events/`,{
+  //         payload
+  //     });
+};
 
-}
+module.exports.PublishShoppingEvent = async (payload) => {
+  // axios.post('http://gateway:8000/shopping/app-events/',{
+  //         payload
+  // });
 
+  axios.post(`http://shopping:8003/app-events/`, {
+    payload,
+  });
+};
 
-// publish messages
-module.exports.PublishMessage = async(channel, binding_key, message) => {
+//Message Broker
+
+module.exports.CreateChannel = async () => {
   try {
-    await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message))
-    console.log('Message has been sent' +  message)
+    const connection = await amqplib.connect(MSG_QUEUE_URL);
+    const channel = await connection.createChannel();
+    await channel.assertQueue(EXCHANGE_NAME, "direct", { durable: true });
+    return channel;
   } catch (err) {
-    throw err
+    throw err;
   }
-}
+};
 
-
-// subscription messages
-module.exports.SubscribeMessage = async(channel, service, binding_key) => {
-
-  const appQueue = await channel.assertQueue('QUEUE_NAME');
-
-  channel.bindQueue(appQueue.queue, EXCHANGE_NAME, binding_key);
-
-  channel.consume(appQueue.queue, data => {
-    console.log('received data');
-    console.log(data.content.toString());
-    channel.ack(data);
-  })
-}
+module.exports.PublishMessage = (channel, service, msg) => {
+  channel.publish(EXCHANGE_NAME, service, Buffer.from(msg));
+  console.log("Sent: ", msg);
+};

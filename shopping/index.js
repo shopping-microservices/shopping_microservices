@@ -6,9 +6,10 @@ app.use(express.json());
 
 app.use('/', (req,res,next) => {
 
-    return res.status(200).json({"msg": "Hello from shopping"})
+    return res.status(200).json({"msg": "Hello from Shopping"})
 })
 
+
 app.listen(8003, () => {
-    console.log('Shopping is listenning to port 8003')
+    console.log('Shopping is Listening to Port 8003')
 })

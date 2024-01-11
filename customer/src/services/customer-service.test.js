@@ -1,10 +1,10 @@
-//which service it is
-describe("CustomerService", ()=> {
-    //which function we are testing
-    describe("SignIn", () => {
-        //which Scenario we are testing
-        test("validate user inputs", () => {});
+// which service it is
+describe("CustomerService", () => {
+  // This will explain which function we are testing!
+  describe("SignIn", () => {
+    // Which Scenario we are testing
+    test("validate user inputs", () => {});
 
-        test("validate response", async () => {})
-    })
-})
+    test("Validate response", async () => {});
+  });
+});
