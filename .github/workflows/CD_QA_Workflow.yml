@@ -49,7 +49,7 @@ jobs:
 
     - name: Generate deployment package
       run: |
-        zip -r deploy-v3.zip . -x '*.git'
+        zip -r deploy_v1.zip . -x '*.git'
 
     - name: Deploy on Elastic beanstalk QA Env
       uses: einaregilsson/beanstalk-deploy@v20
@@ -60,4 +60,4 @@ jobs:
         environment_name: Test-qa-env
         version_label: "ver-${{ github.sha }}"
         region: eu-central-1
-        deployment_package: deploy-v3.zip
+        deployment_package: deploy_v1.zip
