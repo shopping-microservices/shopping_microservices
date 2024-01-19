@@ -49,7 +49,7 @@ jobs:
           
       - name: Generate deployment package
         run: |
-          zip -r deploy-versio-8.zip . -x '*.git'
+          zip -r deploy-versio-82.zip . -x '*.git'
       
       - name: Deploy on Elastic beanstalk QA Env
         uses: einaregilsson/beanstalk-deploy@v21
@@ -60,7 +60,7 @@ jobs:
           environment_name: Test-qa-env
           version_label: "ver-${{ github.sha }}"
           region: eu-central-1
-          deployment_package: deploy-versio-8.zip
+          deployment_package: deploy-versio-82.zip
 
       
         
