@@ -62,5 +62,13 @@ jobs:
           region: eu-central-1
           deployment_package: deploy-versio-82.zip
           use_existing_version_if_available: true
-      
-        
+
+      - name: Handle Instance Status
+        run: |
+          # Check if the instance is no longer running
+          if aws ec2 describe-instance-status --instance-ids i-07d80936261954224 | jq -e '.InstanceStatuses[0].InstanceState.Name' | grep -q 'terminated'; then
+            echo "Instance 'i-07d80936261954224' is terminated. Investigate and take appropriate action."
+            # Add any additional actions or notifications as needed.
+          else
+            echo "Instance 'i-07d80936261954224' is still running."
+          fi
