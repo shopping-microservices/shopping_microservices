@@ -61,7 +61,7 @@ jobs:
           version_label: "ver-$(date +'%Y%m%d%H%M%S')"
           region: eu-central-1
           deployment_package: deploy-versio-82.zip
-          use_existing_version_if_available: true
+          use_existing_version_if_available: false
 
       - name: Handle Instance Status
         run: |
