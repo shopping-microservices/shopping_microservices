@@ -2,7 +2,7 @@ name: Deploy on QA
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -11,64 +11,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v3
-      
-      - name: Create customer Env file
-        working-directory: ./customer
-        run: |
-          touch .env
-          echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
-          echo MONGODB_URI=${{ secrets.QA_CUSTOMER_DB_URL }} >> .env
-          echo MSG_QUEUE_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
-          echo EXCHANGE_NAME=ONLINE_STORE >> .env
-          echo PORT=8001 >> .env
-          cat .env
+    - name: Checkout Source Code
+      uses: actions/checkout@v2
 
-      - name: Create Products Env file
-        working-directory: ./products
-        run: |
-          touch .env
-          echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
-          echo MONGODB_URI=${{ secrets.QA_PRODUCTS_DB_URL }} >> .env
-          echo MSG_QUEUE_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
-          echo EXCHANGE_NAME=ONLINE_STORE >> .env
-          echo PORT=8002 >> .env
-          cat .env
-          
-      - name: Create shopping Env file
-        working-directory: ./shopping
-        run: |
-          touch .env
-          echo APP_SECRET=${{ secrets.QA_APP_SECRET }} >> .env
-          echo MONGODB_URI=${{ secrets.QA_SHOPPING_DB_URL }} >> .env
-          echo MSG_QUEUE_URL=${{ secrets.QA_MSG_QUEUE_URL }} >> .env
-          echo EXCHANGE_NAME=ONLINE_STORE >> .env
-          echo PORT=8003 >> .env
-          cat .env
-          
-      - name: Generate deployment package
-        run: |
-          zip -r deploy-versio-82.zip . -x '*.git'
-      
-      - name: Deploy on Elastic beanstalk QA Env
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: test-qa
-          environment_name: Test-qa-env
-          version_label: "ver-${{ github.sha }}"
-          region: eu-central-1
-          deployment_package: deploy-versio-82.zip
-          use_existing_version_if_available: true
+    - name: Create customer Env file
+      working-directory: ./customer
+      run: |
+        touch .env
+        echo APP_SECRET=jg_youtube_tutorial >> .env
+        echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_customer >> .env
+        echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
+        echo EXCHANGE_NAME=ONLINE_STORE >> .env
+        echo PORT=8001 >> .env
+        cat .env
 
-      - name: Handle Instance Status
-        run: |
-          # Check if the instance is no longer running
-          if aws ec2 describe-instance-status --instance-ids i-07d80936261954224 | jq -e '.InstanceStatuses[0].InstanceState.Name' | grep -q 'terminated'; then
-            echo "Instance 'i-07d80936261954224' is terminated. Investigate and take appropriate action."
-            # Add any additional actions or notifications as needed.
-          else
-            echo "Instance 'i-07d80936261954224' is still running."
-          fi
+    - name: Create products Env file
+      working-directory: ./products
+      run: |
+        touch .env
+        echo APP_SECRET=jg_youtube_tutorial >> .env
+        echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_products >> .env
+        echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
+        echo EXCHANGE_NAME=ONLINE_STORE >> .env
+        echo PORT=8002 >> .env
+        cat .env
+
+    - name: Create shopping Env file
+      working-directory: ./shopping
+      run: |
+        touch .env
+        echo APP_SECRET=jg_youtube_tutorial >> .env
+        echo MONGODB_URI=mongodb://nosql-db:27017/shopping_ms_shopping >> .env
+        echo MESSAGE_BROKER_URL=amqps://qxspliae:udr0XJs3FpwWz2ChVPFXAWtqnXQe2e_I@rat.rmq2.cloudamqp.com/qxspliae >> .env
+        echo EXCHANGE_NAME=ONLINE_STORE >> .env
+        echo PORT=8003 >> .env
+        cat .env
+
+    - name: Generate deployment package
+      run: |
+        zip -r deploy.zip . -x '*.git'
+
+    - name: Deploy on Elastic beanstalk QA Env
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCES_KEY }}
+        application_name: cicd-ms
+        environment_name: Cicd-ms-env
+        version_label: "ver-${{ github.sha }}"
+        region: eu-central-1
+        deployment_package: deploy.zip
