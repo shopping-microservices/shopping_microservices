@@ -49,7 +49,7 @@ jobs:
 
     - name: Generate deployment package
       run: |
-        zip -r deploy.zip . -x '*.git'
+        zip -r deploye.zip . -x '*.git'
 
     - name: Deploy on Elastic beanstalk QA Env
       uses: einaregilsson/beanstalk-deploy@v21
@@ -60,4 +60,4 @@ jobs:
         environment_name: Cicd-ms-env
         version_label: "ver-${{ github.sha }}"
         region: eu-central-1
-        deployment_package: deploy.zip
+        deployment_package: deploye.zip
